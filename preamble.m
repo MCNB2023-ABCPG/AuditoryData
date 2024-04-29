@@ -1,6 +1,5 @@
 %%% Prepare the directories and data
 % working_directory should be a string leading to AuditoryData
-% function returns 
 function preamble(working_directory)
 
     % change working directory
@@ -25,11 +24,12 @@ function preamble(working_directory)
     end
     
     
-    % move .img files 004 to 015 to dummy
+    % move .img and .hdr files 004 to 015 to dummy
     try
         for i = 4:15
             number = sprintf('%03d', i);
-            file = sprintf('MoAEpilot/fM00223/fM00223_%s.img', number);
+            %file = sprintf('MoAEpilot/fM00223/fM00223_%s.img', number);
+            file = sprintf('MoAEpilot/fM00223/fM00223_%s.*', number);
             movefile(file, './auditory/dummy/');
         end
     catch
