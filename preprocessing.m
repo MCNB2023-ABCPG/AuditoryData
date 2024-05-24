@@ -60,7 +60,7 @@ for i = 1:numel(pat_dir)
     S.dat_dir = dat_dir; % add data folder path
     S.pat_dir = pat_dir{i}; % add subject path
     S.run_dir = run_dir{i}; % add run path
-    
+
     % participant PRE directory
     pat_pre_dir = fullfile(S.dat_dir, S.pat_dir, 'PRE'); % Folder PRE for preprocessing path for the participant
     pat_pre_str_dir = fullfile(S.dat_dir, S.pat_dir, 'PRE', 'STR'); % Folder STR for structural path

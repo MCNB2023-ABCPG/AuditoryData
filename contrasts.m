@@ -3,7 +3,7 @@ function contrasts(wd, spm_path)
 
 % initialization
 if ~exist('spm_path', 'var')
-    spm_path = '/Users/angelaseo/Desktop/spm12';
+    spm_path = '/Users/pschm/spm12';
 end
 
 if ~exist('wd','var')
@@ -41,23 +41,36 @@ for i = 1:numel(pat_dir)
      % select the design
     pat_glm_design = spm_select('FPList', pat_glm_dir, '^SPM.mat$');
 
-job{1}.spm.stats.con.spmmat = {'./DATA/PAT_1/GLM/SPM.mat'};
-job{1}.spm.stats.con.consess{1}.tcon.name = 'name_of_contrast';
-job{1}.spm.stats.con.consess{1}.tcon.weights = [1 0];
-job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
-job{1}.spm.stats.con.delete = 0;
-
-job{1}.spm.stats.results.spmmat = {'/Users/angelaseo/Desktop/GitHub/AuditoryData/DATA/PAT_1/GLM/SPM.mat'};
-job{1}.spm.stats.results.conspec.titlestr = '';
-job{1}.spm.stats.results.conspec.contrasts = 1;
-job{1}.spm.stats.results.conspec.threshdesc = 'FWE';
-job{1}.spm.stats.results.conspec.thresh = 0.05;
-job{1}.spm.stats.results.conspec.extent = 0;
-job{1}.spm.stats.results.conspec.conjunction = 1;
-job{1}.spm.stats.results.conspec.mask.none = 1;
-job{1}.spm.stats.results.units = 1;
-job{1}.spm.stats.results.export{1}.ps = true;
-
-spm_jobman('run', job);
+    job = [];
+    job{1}.spm.stats.con.spmmat = {'./DATA/PAT_1/GLM/SPM.mat'};
+    job{1}.spm.stats.con.consess{1}.tcon.name = 'name_of_contrast';
+    job{1}.spm.stats.con.consess{1}.tcon.weights = [1 0];
+    job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
+    
+    %job{1}.spm.stats.con.consess{2}.tcon.name = 'name_of_contrast';
+    %job{1}.spm.stats.con.consess{2}.tcon.weights = [-1 0];
+    %job{1}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
+    
+    job{1}.spm.stats.con.delete = 0;
+    
+    spm_jobman('run', job);
+    
+    
+    job = [];
+    job{1}.spm.stats.results.spmmat = {'/Users/pschm/Documents/University/mcnb/2_semester/NMDA-II/AuditoryData/DATA/PAT_1/GLM/SPM.mat'};
+    job{1}.spm.stats.results.conspec.titlestr = '';
+    job{1}.spm.stats.results.conspec.contrasts = 1;
+    job{1}.spm.stats.results.conspec.threshdesc = 'FWE';
+    job{1}.spm.stats.results.conspec.thresh = 0.05;
+    job{1}.spm.stats.results.conspec.extent = 0;
+    job{1}.spm.stats.results.conspec.conjunction = 1;
+    job{1}.spm.stats.results.conspec.mask.none = 1;
+    job{1}.spm.stats.results.units = 1;
+    job{1}.spm.stats.results.export{1}.ps = true;
+    job{1}.spm.stats.results.export{2}.tspm.basename = './DATA/PAT_1/GLM';
+    job{1}.spm.stats.results.export{3}.jpg = true;
+    
+    
+    spm_jobman('run', job);
 
 end
