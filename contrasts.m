@@ -41,6 +41,12 @@ for i = 1:numel(pat_dir)
      % select the design
     pat_glm_design = spm_select('FPList', pat_glm_dir, '^SPM.mat$');
 
-%ADD BATCH SCRIPT HERE
+job{1}.spm.stats.con.spmmat = {'./DATA/PAT_1/GLM/SPM.mat'};
+job{1}.spm.stats.con.consess{1}.tcon.name = 'name_of_contrast';
+job{1}.spm.stats.con.consess{1}.tcon.weights = [1 0];
+job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
+job{1}.spm.stats.con.delete = 0;
+
+spm_jobman('run', job);
 
 end
