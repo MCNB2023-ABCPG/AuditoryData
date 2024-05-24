@@ -43,7 +43,7 @@ for i = 1:numel(pat_dir)
 
     job = [];
     job{1}.spm.stats.con.spmmat = {'./DATA/PAT_1/GLM/SPM.mat'};
-    job{1}.spm.stats.con.consess{1}.tcon.name = 'name_of_contrast';
+    job{1}.spm.stats.con.consess{1}.tcon.name = 'listening>rest';
     job{1}.spm.stats.con.consess{1}.tcon.weights = [1 0];
     job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
     
@@ -67,7 +67,7 @@ for i = 1:numel(pat_dir)
     job{1}.spm.stats.results.conspec.mask.none = 1;
     job{1}.spm.stats.results.units = 1;
     job{1}.spm.stats.results.export{1}.ps = true;
-    job{1}.spm.stats.results.export{2}.tspm.basename = './DATA/PAT_1/GLM';
+    job{1}.spm.stats.results.export{2}.tspm.basename = 'output';
     job{1}.spm.stats.results.export{3}.jpg = true;
     
     
