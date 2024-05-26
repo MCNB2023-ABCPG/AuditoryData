@@ -1,4 +1,4 @@
-function preprocessing(wd, spm_path)
+function preprocessing(folder_path_root, spm_path)
 %
 % Ideas for general structure from:
 % https://github.com/phildean/SPM_fMRI_Example_Pipeline/blob/master/preprocess.m
@@ -21,7 +21,7 @@ function preprocessing(wd, spm_path)
 %
 % Parameters
 % ----------
-%       wd = char
+%       folder_path_root = char
 %           specify the folder in which the data folder is located -> TOP
 % 
 % Returns
@@ -38,8 +38,8 @@ if ~exist('spm_path', 'var')
     spm_path = '/Users/pschm/spm12';
 end
 
-if ~exist('wd','var')
-    wd = fileparts(matlab.desktop.editor.getActiveFilename);
+if ~exist('folder_path_root','var')
+    folder_path_root = fileparts(matlab.desktop.editor.getActiveFilename);
 end
 
 addpath(spm_path)
@@ -48,37 +48,37 @@ spm_jobman('initcfg')
 
 
 % specifying data, participant and run paths
-dat_dir = fullfile(wd, 'DATA'); % DATA foulder path
-pat_dir = {'PAT_1'}; % {'PAT_1', 'PAT_2'}
-run_dir = {[1]}; % {[1 2 3] [1 2 3]} this would be two participnats with each three runs
+folder_path_data = fullfile(folder_path_root, 'DATA'); % DATA foulder path
+folder_base_sub = {'PAT_1'}; % {'PAT_1', 'PAT_2'}
+folder_base_run = {[1]}; % {[1 2 3] [1 2 3]} this would be two participnats with each three runs
 
 
 % iteration over participants
-for i = 1:numel(pat_dir)
+for i = 1:numel(folder_base_sub)
 
     S = []; % init empty structure
-    S.dat_dir = dat_dir; % add data folder path
-    S.pat_dir = pat_dir{i}; % add subject path
-    S.run_dir = run_dir{i}; % add run path
+    S.folder_path_data = folder_path_data; % add data folder path
+    S.folder_base_sub = folder_base_sub{i}; % add subject path
+    S.folder_base_run = folder_base_run{i}; % add run path
 
     % participant PRE directory
-    pat_pre_dir = fullfile(S.dat_dir, S.pat_dir, 'PRE'); % Folder PRE for preprocessing path for the participant
-    pat_pre_str_dir = fullfile(S.dat_dir, S.pat_dir, 'PRE', 'STR'); % Folder STR for structural path
+    folder_path_pre = fullfile(S.folder_path_data, S.folder_base_sub, 'PRE'); % Folder PRE for preprocessing path for the participant
+    folder_path_str = fullfile(S.folder_path_data, S.folder_base_sub, 'PRE', 'STR'); % Folder STR for structural path
 
     % iterate over runs
-    for r = 1:numel(S.run_dir)
+    for r = 1:numel(S.folder_base_run)
     
-        % specify the RUN directory according to the run sequence in S.run_dir
-        pat_run_dir = fullfile(pat_pre_dir, ['RUN_' num2str(S.run_dir(r))]); 
+        % specify the RUN directory according to the run sequence in S.folder_base_run
+        folder_path_run = fullfile(folder_path_pre, ['RUN_' num2str(S.folder_base_run(r))]); 
         
         
         % REALIGN
         % select files
-        pat_run_volumes = cellstr(spm_select('ExtFPListRec', pat_run_dir, '^f.*\.img$', 1));
+        file_path_volumes = cellstr(spm_select('ExtFPListRec', folder_path_run, '^f.*\.img$', 1));
         
         % job options
         job = [];
-        job{1}.spm.spatial.realign.estwrite.data = {pat_run_volumes};
+        job{1}.spm.spatial.realign.estwrite.data = {file_path_volumes};
         job{1}.spm.spatial.realign.estwrite.eoptions.quality = 0.9;
         job{1}.spm.spatial.realign.estwrite.eoptions.sep = 4;
         job{1}.spm.spatial.realign.estwrite.eoptions.fwhm = 5;
@@ -96,13 +96,13 @@ for i = 1:numel(pat_dir)
         
 
         % COREGISTER
-        pat_run_str = spm_select('ExtFPListRec', pat_pre_str_dir, '^s.*\.img$', 1);
-        pat_run_mean = spm_select('ExtFPListRec', pat_pre_dir, '^mean.*\.img', 1);
+        file_path_str = spm_select('ExtFPListRec', folder_path_str, '^s.*\.img$', 1);
+        file_path_mean = spm_select('ExtFPListRec', folder_path_pre, '^mean.*\.img', 1);
 
         % job options
         job = [];
-        job{1}.spm.spatial.coreg.estimate.ref = {pat_run_mean};
-        job{1}.spm.spatial.coreg.estimate.source = {pat_run_str};
+        job{1}.spm.spatial.coreg.estimate.ref = {file_path_mean};
+        job{1}.spm.spatial.coreg.estimate.source = {file_path_str};
         job{1}.spm.spatial.coreg.estimate.other = {''};
         job{1}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
         job{1}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
@@ -118,7 +118,7 @@ for i = 1:numel(pat_dir)
 
         % job options
         job = [];
-        job{1}.spm.spatial.preproc.channel.vols = {pat_run_str};
+        job{1}.spm.spatial.preproc.channel.vols = {file_path_str};
         job{1}.spm.spatial.preproc.channel.biasreg = 0.001;
         job{1}.spm.spatial.preproc.channel.biasfwhm = 60;
         job{1}.spm.spatial.preproc.channel.write = [0 1];
@@ -162,12 +162,12 @@ for i = 1:numel(pat_dir)
 
 
         % NORMALISE
-        pat_run_str_y = spm_select('FPList', pat_pre_str_dir, '^y_.*\.nii$');
+        file_path_str_y = spm_select('FPList', folder_path_str, '^y_.*\.nii$');
 
         % job options
         job = [];
-        job{1}.spm.spatial.normalise.write.subj.def = {pat_run_str_y};
-        job{1}.spm.spatial.normalise.write.subj.resample = pat_run_volumes;
+        job{1}.spm.spatial.normalise.write.subj.def = {file_path_str_y};
+        job{1}.spm.spatial.normalise.write.subj.resample = file_path_volumes;
         job{1}.spm.spatial.normalise.write.woptions.bb = [-78 -112 -70
                                                           78 76 85];
         job{1}.spm.spatial.normalise.write.woptions.vox = [3 3 3];
@@ -180,11 +180,11 @@ for i = 1:numel(pat_dir)
 
 
         % SMOOTH
-        pat_run_volumes_norm = cellstr(spm_select('ExtFPListRec', pat_run_dir, '^wf.*\.img$', 1));
+        file_path_volumes_norm = cellstr(spm_select('ExtFPListRec', folder_path_run, '^wf.*\.img$', 1));
         
         % job options
         job = [];
-        job{1}.spm.spatial.smooth.data = pat_run_volumes_norm;
+        job{1}.spm.spatial.smooth.data = file_path_volumes_norm;
         job{1}.spm.spatial.smooth.fwhm = [7 7 7];
         job{1}.spm.spatial.smooth.dtype = 0;
         job{1}.spm.spatial.smooth.im = 0;
