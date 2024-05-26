@@ -62,61 +62,22 @@ folder_path_data = fullfile(folder_path_root, 'DATA'); % DATA foulder path
 folder_base_sub = {'PAT_1'}; % {'PAT_1', 'PAT_2'}
 folder_base_run = {[1]}; % {[1 2 3] [1 2 3]} this would be two participnats with each three runs
 
-% specifying the steps
-% 1 - realign
-% 2 - coregister
-% 3 - segment
-% 4 - normalise
-% 5 - smooth
 
-switch_prep = [1 4 7];
 
-% OPTION 1
-for i = switch_prep
-    
-    switch i
-        case 1 
-            % realign code
-    
-    
-        case 2
-            % coreg code 
-    end
+switch_analysis = ['rcs']; % r - realignment, c - cor
+
+switch_analysis = [1 4 7]; % 1 - realignment, 2 - ...
+
+
+for i = switch_analysis
+
+   switch i
+       %if i == 1
+       case 1
+
+       case 2
 
 end
-
-
-% OPTION 2
-for i = switch_prep
-    
-    if i == 1
-        % realign code
-
-    elseif i == 2
-        % coreg code
-    
-    elseif i == 3
-        % segment code
-    
-    end
-
-end
-
-
-% OPTION 3
-if any(switch_prep == 1)
-    % realign code
-end
-
-if any(switch_prep == 2)
-    % coreg code
-end
-
-if any(switch_prep == 3)
-    % segment code
-end
-
-
 
 
 % iteration over participants

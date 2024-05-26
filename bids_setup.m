@@ -14,7 +14,7 @@ function bids_setup()
 %   sub-01/                 % raw data - output of DICOM to BIDS conversion
 %     ses-01/
 %       func/               % contain 4D files for individual runs
-%       ana/
+%       anat/
 %   ...
 %
 %
@@ -40,15 +40,15 @@ function bids_setup()
 
 
 % -------- INIT VARIABLES -------- %
-folder_path_root = '/Users/pschm/Documents/University/mcnb/2_semester/NMDA-II/bids_test';
+folder_path_root = '/Users/pschm/Documents/University/mcnb/2_semester/NMDA-II/AuditoryData/bids_test';
 folder_path_code = fullfile(folder_path_root, 'code');
 folder_path_sourcedata = fullfile(folder_path_root, 'sourcedata');
 folder_path_derivatives = fullfile(folder_path_root, 'derivatives');
 
 % How many subjects, sessions, runs? Either cell array (char) or number (double)
-sub_n = 2; 
-ses_n = 1;
-run_n = 2;
+sub_n = 4; 
+ses_n = 2; 
+run_n = 6;
 
 % What subdirectories + modalities are needed?
 % preprocessing
@@ -59,6 +59,11 @@ folder_base_pipelines{1}.run = {true}; % run folder necessary?
 folder_base_pipelines{2}.name = {'firstlevel_analysis'};
 folder_base_pipelines{2}.modalities = {NaN}; % results of first-level analysis will be safed directly in sub folder
 folder_base_pipelines{2}.run = {false}; % run folder necessary?
+% contrast
+folder_base_pipelines{3}.name = {'contrast'};
+folder_base_pipelines{3}.modalities = {NaN}; % results of first-level analysis will be safed directly in sub folder
+folder_base_pipelines{3}.run = {false}; % run folder necessary?
+
 % ADD MORE
 % folder_base_pipelines{3}.name = {};
 % folder_base_pipelines{3}.modalities = {}; % results of first-level analysis will be safed directly in sub folder
@@ -94,7 +99,7 @@ elseif isa(sub_n, 'cell')
 end
 
 if isa(sub_n, 'double')
-   run_all = repmat(arrayfun(@(x) sprintf('%02d', x), 1:run_n, 'UniformOutput', false),sub_n*run_n,1);
+   run_all = repmat(arrayfun(@(x) sprintf('%02d', x), 1:run_n, 'UniformOutput', false),sub_n*ses_n,1);
 elseif isa(sub_n, 'cell')
    run_all = run_n;
 end

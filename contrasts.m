@@ -38,7 +38,7 @@ for i = 1:numel(folder_base_sub)
     r = 1;
     folder_path_run = fullfile(folder_path_pre, ['RUN_' num2str(S.folder_base_run(r))]);
 
-     % select the design
+    % select the design
     file_path_design = spm_select('FPList', folder_path_glm, '^SPM.mat$');
 
     job = [];
