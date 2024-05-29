@@ -90,5 +90,40 @@ for i = 1:numel(folder_base_sub)
 
     spm_jobman('run', job);
 
+    % Contrasts
+    % select the design
+    file_path_design = spm_select('FPList', folder_path_glm, '^SPM.mat$');
+
+    job = [];
+    job{1}.spm.stats.con.spmmat = {file_path_design};
+    job{1}.spm.stats.con.consess{1}.tcon.name = 'listening>rest';
+    job{1}.spm.stats.con.consess{1}.tcon.weights = [1 0];
+    job{1}.spm.stats.con.consess{1}.tcon.sessrep = 'none';
+    
+    %job{1}.spm.stats.con.consess{2}.tcon.name = 'name_of_contrast';
+    %job{1}.spm.stats.con.consess{2}.tcon.weights = [-1 0];
+    %job{1}.spm.stats.con.consess{2}.tcon.sessrep = 'none';
+    
+    job{1}.spm.stats.con.delete = 0;
+    
+    spm_jobman('run', job);
+    
+    
+    job = [];
+    job{1}.spm.stats.results.spmmat = {file_path_design};
+    job{1}.spm.stats.results.conspec.titlestr = '';
+    job{1}.spm.stats.results.conspec.contrasts = 1;
+    job{1}.spm.stats.results.conspec.threshdesc = 'FWE';
+    job{1}.spm.stats.results.conspec.thresh = 0.05;
+    job{1}.spm.stats.results.conspec.extent = 0;
+    job{1}.spm.stats.results.conspec.conjunction = 1;
+    job{1}.spm.stats.results.conspec.mask.none = 1;
+    job{1}.spm.stats.results.units = 1;
+    job{1}.spm.stats.results.export{1}.ps = true;
+    job{1}.spm.stats.results.export{2}.tspm.basename = 'output';
+    job{1}.spm.stats.results.export{3}.jpg = true;
+    
+    spm_jobman('run', job);
+
 
 end
