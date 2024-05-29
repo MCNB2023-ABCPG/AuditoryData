@@ -45,7 +45,7 @@ function preprocessing(folder_path_root, spm_path)
 
 % initialization
 if ~exist('spm_path', 'var')
-    spm_path = '/Users/angelaseo/Desktop/spm12';
+    spm_path = '/Users/pschm/spm12';
 end
 
 if ~exist('folder_path_root','var')
@@ -53,6 +53,7 @@ if ~exist('folder_path_root','var')
 end
 
 addpath(spm_path)
+addpath(fullfile(folder_path_root,'jobs'))
 spm('defaults', 'fmri') 
 spm_jobman('initcfg')
 
@@ -69,134 +70,7 @@ folder_base_run = {[1]}; % {[1 2 3] [1 2 3]} this would be two participnats with
 % 4 - normalise
 % 5 - smooth
 
-switch_prep = [1];
-
-if any(switch_prep == 1)
-    % REALIGN
-    % select files
-    file_path_volumes = cellstr(spm_select('ExtFPListRec', folder_path_run, '^f.*\.img$', 1));
-    
-    % job options
-    job = [];
-    job{1}.spm.spatial.realign.estwrite.data = {file_path_volumes};
-    job{1}.spm.spatial.realign.estwrite.eoptions.quality = 0.9;
-    job{1}.spm.spatial.realign.estwrite.eoptions.sep = 4;
-    job{1}.spm.spatial.realign.estwrite.eoptions.fwhm = 5;
-    job{1}.spm.spatial.realign.estwrite.eoptions.rtm = 0;
-    job{1}.spm.spatial.realign.estwrite.eoptions.interp = 2;
-    job{1}.spm.spatial.realign.estwrite.eoptions.wrap = [0 0 0];
-    job{1}.spm.spatial.realign.estwrite.eoptions.weight = '';
-    job{1}.spm.spatial.realign.estwrite.roptions.which = [0 1];
-    job{1}.spm.spatial.realign.estwrite.roptions.interp = 4;
-    job{1}.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0];
-    job{1}.spm.spatial.realign.estwrite.roptions.mask = 1;
-    job{1}.spm.spatial.realign.estwrite.roptions.prefix = 'r';
-    
-    spm_jobman('run', job)
-end
-
-if any(switch_prep == 2)
-    % COREGISTER
-    file_path_str = spm_select('ExtFPListRec', folder_path_str, '^s.*\.img$', 1);
-    file_path_mean = spm_select('ExtFPListRec', folder_path_run, '^mean.*\.img', 1);
-
-    % job options
-    job = [];
-    job{1}.spm.spatial.coreg.estimate.ref = {file_path_mean};
-    job{1}.spm.spatial.coreg.estimate.source = {file_path_str};
-    job{1}.spm.spatial.coreg.estimate.other = {''};
-    job{1}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
-    job{1}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
-    job{1}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
-    job{1}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];
-    
-    spm_jobman('run', job)
-end
-
-if any(switch_prep == 3)
-    % SEGMENT
-    spm_path_nii = spm_select('FPList', fullfile(spm_path,'tpm'), '^TPM.nii$');
-    spm_path_nii_list = cellstr([repmat(spm_path_nii,6,1) strcat(',',num2str([1:6]'))]);
-
-    % job options
-    job = [];
-    job{1}.spm.spatial.preproc.channel.vols = {file_path_str};
-    job{1}.spm.spatial.preproc.channel.biasreg = 0.001;
-    job{1}.spm.spatial.preproc.channel.biasfwhm = 60;
-    job{1}.spm.spatial.preproc.channel.write = [0 1];
-    job{1}.spm.spatial.preproc.tissue(1).tpm = {spm_path_nii_list{1}};
-    job{1}.spm.spatial.preproc.tissue(1).ngaus = 1;
-    job{1}.spm.spatial.preproc.tissue(1).native = [1 0];
-    job{1}.spm.spatial.preproc.tissue(1).warped = [0 0];
-    job{1}.spm.spatial.preproc.tissue(2).tpm = {spm_path_nii_list{2}};
-    job{1}.spm.spatial.preproc.tissue(2).ngaus = 1;
-    job{1}.spm.spatial.preproc.tissue(2).native = [1 0];
-    job{1}.spm.spatial.preproc.tissue(2).warped = [0 0];
-    job{1}.spm.spatial.preproc.tissue(3).tpm = {spm_path_nii_list{3}};
-    job{1}.spm.spatial.preproc.tissue(3).ngaus = 2;
-    job{1}.spm.spatial.preproc.tissue(3).native = [1 0];
-    job{1}.spm.spatial.preproc.tissue(3).warped = [0 0];
-    job{1}.spm.spatial.preproc.tissue(4).tpm = {spm_path_nii_list{4}};
-    job{1}.spm.spatial.preproc.tissue(4).ngaus = 3;
-    job{1}.spm.spatial.preproc.tissue(4).native = [1 0];
-    job{1}.spm.spatial.preproc.tissue(4).warped = [0 0];
-    job{1}.spm.spatial.preproc.tissue(5).tpm = {spm_path_nii_list{5}};
-    job{1}.spm.spatial.preproc.tissue(5).ngaus = 4;
-    job{1}.spm.spatial.preproc.tissue(5).native = [1 0];
-    job{1}.spm.spatial.preproc.tissue(5).warped = [0 0];
-    job{1}.spm.spatial.preproc.tissue(6).tpm = {spm_path_nii_list{6}};
-    job{1}.spm.spatial.preproc.tissue(6).ngaus = 2;
-    job{1}.spm.spatial.preproc.tissue(6).native = [0 0];
-    job{1}.spm.spatial.preproc.tissue(6).warped = [0 0];
-    job{1}.spm.spatial.preproc.warp.mrf = 1;
-    job{1}.spm.spatial.preproc.warp.cleanup = 1;
-    job{1}.spm.spatial.preproc.warp.reg = [0 0.001 0.5 0.05 0.2];
-    job{1}.spm.spatial.preproc.warp.affreg = 'mni';
-    job{1}.spm.spatial.preproc.warp.fwhm = 0;
-    job{1}.spm.spatial.preproc.warp.samp = 3;
-    job{1}.spm.spatial.preproc.warp.write = [0 1];
-    job{1}.spm.spatial.preproc.warp.vox = NaN;
-    job{1}.spm.spatial.preproc.warp.bb = [NaN NaN NaN
-                                                  NaN NaN NaN];
-
-
-    spm_jobman('run', job)
-end
-
-if any(switch_prep == 4)
-    % NORMALISE
-    file_path_str_y = spm_select('FPList', folder_path_str, '^y_.*\.nii$');
-
-    % job options
-    job = [];
-    job{1}.spm.spatial.normalise.write.subj.def = {file_path_str_y};
-    job{1}.spm.spatial.normalise.write.subj.resample = file_path_volumes;
-    job{1}.spm.spatial.normalise.write.woptions.bb = [-78 -112 -70
-                                                      78 76 85];
-    job{1}.spm.spatial.normalise.write.woptions.vox = [3 3 3];
-    job{1}.spm.spatial.normalise.write.woptions.interp = 4;
-    job{1}.spm.spatial.normalise.write.woptions.prefix = 'w';        
-
-
-    spm_jobman('run', job)
-end
-
-if any(switch_prep == 5)
-    % SMOOTH
-    file_path_volumes_norm = cellstr(spm_select('ExtFPListRec', folder_path_run, '^wf.*\.img$', 1));
-    
-    % job options
-    job = [];
-    job{1}.spm.spatial.smooth.data = file_path_volumes_norm;
-    job{1}.spm.spatial.smooth.fwhm = [7 7 7];
-    job{1}.spm.spatial.smooth.dtype = 0;
-    job{1}.spm.spatial.smooth.im = 0;
-    job{1}.spm.spatial.smooth.prefix = 's';
-
-    spm_jobman('run', job)
-end
-
-
+switch_prep = [1 2 3 4 5];
 
 
 % iteration over participants
@@ -217,11 +91,67 @@ for i = 1:numel(folder_base_sub)
         % specify the RUN directory according to the run sequence in S.folder_base_run
         folder_path_run = fullfile(folder_path_pre, ['RUN_' num2str(S.folder_base_run(r))]); 
 
+        % REALIGN
+        if any(switch_prep == 1)
+            % select files
+            file_path_volumes = cellstr(spm_select('ExtFPListRec', folder_path_run, '^f.*\.img$', 1));
+            % run realignment
+            realignment(file_path_volumes) 
+        end
+
+        % COREGISTER
+        if any(switch_prep == 2)
+            % select the structural source
+            file_path_str = spm_select('ExtFPListRec', folder_path_str, '^s.*\.img$', 1);
+            
+            % select mean image as reference
+            file_path_mean = spm_select('ExtFPListRec', folder_path_run, '^mean.*\.img', 1);
+
+            %run
+            coregistration(file_path_str, file_path_mean)
+        end
+
+        % SEGMENTATION
+        if any(switch_prep == 3)
+            % select nii files from spm path
+            spm_path_nii = spm_select('FPList', fullfile(spm_path,'tpm'), '^TPM.nii$');
+            spm_path_nii_list = cellstr([repmat(spm_path_nii,6,1) strcat(',',num2str([1:6]'))]);
+            
+            % select structural
+            file_path_str = spm_select('ExtFPListRec', folder_path_str, '^s.*\.img$', 1);
+
+            % run
+            segmentation(file_path_str, spm_path_nii_list)
+        end
+        
+        % NORMALIZATION
+        if any(switch_prep == 4)
+            % select deformation field from segmentation
+            file_path_str_y = spm_select('FPList', folder_path_str, '^y_.*\.nii$');
+
+            % select volumes
+            file_path_volumes = cellstr(spm_select('ExtFPListRec', folder_path_run, '^f.*\.img$', 1));
+
+            % run
+            normalization(file_path_str_y,file_path_volumes)
+        end
+        
+        % SMOOTHING
+        if any(switch_prep == 5)
+            % select normalized volumes
+            file_path_volumes_norm = cellstr(spm_select('ExtFPListRec', folder_path_run, '^wf.*\.img$', 1));
+
+            % run
+            smoothing(file_path_volumes_norm)
+        end
+
+
     end % run loop
-
-
 end % subject loop
 
+
+
 rmpath(spm_path)
+rmpath(fullfile(folder_path_root,'jobs'))
 
 end 
