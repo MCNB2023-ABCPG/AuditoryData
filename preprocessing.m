@@ -96,7 +96,7 @@ for i = 1:numel(folder_base_sub)
             % select files
             file_path_volumes = cellstr(spm_select('ExtFPListRec', folder_path_run, '^f.*\.img$', 1));
             % run realignment
-            realignment(file_path_volumes) 
+            realignment(file_path_volumes);
         end
 
         % COREGISTER

@@ -78,7 +78,8 @@ folder_base_pipelines{1}.run = {false};                                     % ru
 
 % create pipelines inside sub with sub at derivatives level (ALTERNATIVE)
 % folder_base_pipelines{1}.name = {NaN};                                    % no name leads to sub at derivative level
-% folder_base_pipelines{1}.modalities = {'pipeline1', 'pipeline2'};         % add pi
+% folder_base_pipelines{1}.modalities = {'pipeline1', 'pipeline2'};         % add pipeline for each subject
+% folder_base_pipelines{1}.modalities = {'anat','func','glm'};              % or modalities
 % folder_base_pipelines{1}.run = {false};                                   % run folder necessary?
 
 % ADD MORE
