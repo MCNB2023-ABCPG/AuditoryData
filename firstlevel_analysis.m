@@ -3,7 +3,7 @@ function firstlevel_analysis(folder_path_root, spm_path)
 
 % initialization
 if ~exist('spm_path', 'var')
-    spm_path = '/Users/pschm/spm12';
+    spm_path = '/Users/pschm/spm12_dev_main';
 end
 
 if ~exist('folder_path_root','var')
